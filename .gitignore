@@ -1,0 +1,6 @@
+dist
+node_modules/
+jspm_packages/
+typings/
+.npm
+*.tgz

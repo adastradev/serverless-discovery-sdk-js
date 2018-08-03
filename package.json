@@ -1,0 +1,28 @@
+{
+  "name": "@adastradev/serverless-discovery-sdk-js",
+  "version": "0.0.1",
+  "description": "Serverless Service Discovery API",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Serverless",
+    "Service",
+    "Discovery",
+    "Registry"
+  ],
+  "author": "Ad Astra",
+  "contributors": [
+    "Andrew Regier <aregier@regiernet.com>"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^3.0.1",
+    "typings": "^2.1.1"
+  },
+  "dependencies": {
+    "aws-api-gateway-client": "^0.2.16"
+  }
+}
