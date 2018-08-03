@@ -1,0 +1,4 @@
+export const Config = {
+    aws_region: 'us-east-1',
+    discovery_service_endpoint: 'DISCOVERY_ENDPOINT'
+};
