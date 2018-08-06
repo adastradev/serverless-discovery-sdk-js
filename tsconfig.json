@@ -9,5 +9,10 @@
     "rootDir": "./source",
     "outDir": "./dist",
     "declaration": true
-  }
+  },
+  "exclude": [
+    ".vscode",
+    "node_modules",
+    "./test"
+  ]
 }

@@ -1,11 +1,11 @@
-import { ServiceApiModel } from "./ServiceApiModel";
-import { ApiCredentials } from "./ApiCredentials";
-import { IAMCredentials } from "./IAMCredentials";
-import { BearerTokenCredentials } from "./BearerTokenCredentials";
+import { ServiceApiModel } from './ServiceApiModel';
+import { ApiCredentials } from './ApiCredentials';
+import { IAMCredentials } from './IAMCredentials';
+import { BearerTokenCredentials } from './BearerTokenCredentials';
 
 // ignore type checking for private member aws-api-gateway-client for now
 declare function require(name:string): any; // tslint:disable-line
-const apigClientFactory: any = require('aws-api-gateway-client').default;
+const apigClientFactory: any = require('aws-api-gateway-client').default; // tslint:disable-line
 
 export class DiscoveryServiceApi {
     // TODO: create an interface for client to allow plugging in clients for cloud providers other than AWS
@@ -13,80 +13,76 @@ export class DiscoveryServiceApi {
     private additionalParams: any;
 
     constructor(serviceEndpointUri: string, region: string, credentials: ApiCredentials) {
-        if (credentials.type == 'None') {
+        if (credentials.type === 'None') {
             this.apigClient = apigClientFactory.newClient({
-                invokeUrl: serviceEndpointUri,
                 accessKey: '',
-                secretKey: '',
-                region: region
-            });
-        }
-        else if (credentials.type == 'IAM') {
-            const iamCreds = <IAMCredentials>(credentials);
-            this.apigClient = apigClientFactory.newClient({
                 invokeUrl: serviceEndpointUri,
-                accessKey: iamCreds.accessKeyId,
-                secretKey: iamCreds.secretAccessKey,
-                region: region
+                region,
+                secretKey: ''
             });
-        }
-        else if (credentials.type == 'BearerToken') {
-            const tokenCreds = <BearerTokenCredentials>(credentials);
+        } else if (credentials.type === 'IAM') {
+            const iamCreds = credentials as IAMCredentials;
+            this.apigClient = apigClientFactory.newClient({
+                accessKey: iamCreds.accessKeyId,
+                invokeUrl: serviceEndpointUri,
+                region,
+                secretKey: iamCreds.secretAccessKey
+            });
+        } else if (credentials.type === 'BearerToken') {
+            const tokenCreds = credentials as BearerTokenCredentials;
             this.additionalParams = {
                 headers: {
                     Authorization: 'Bearer ' + tokenCreds.idToken
                 }
             };
             this.apigClient = apigClientFactory.newClient({
-                invokeUrl: serviceEndpointUri,
                 accessKey: '',
-                secretKey: '',
-                region: region
+                invokeUrl: serviceEndpointUri,
+                region,
+                secretKey: ''
             });
-        }
-        else {
+        } else {
             throw(Error('Unsupported credential type in DiscoveryServiceApi'));
         }
     }
 
-    getService(id: string) {
-        var params = {};
-        var pathTemplate = '/catalog/service/' + id;
-        var method = 'GET';
-        var additionalParams = {};
-        var body = {};
+    public getService(id: string) {
+        const params = {};
+        const pathTemplate = '/catalog/service/' + id;
+        const method = 'GET';
+        const additionalParams = {};
+        const body = {};
 
         return this.apigClient.invokeApi(params, pathTemplate, method, additionalParams, body);
     }
 
-    lookupService(ServiceName: string) {
-        var params = {};
-        var pathTemplate = '/catalog/service';
-        var method = 'GET';
-        var additionalParams = { queryParams: { ServiceName: ServiceName } };
-        var body = {};
+    public lookupService(ServiceName: string) {
+        const params = {};
+        const pathTemplate = '/catalog/service';
+        const method = 'GET';
+        const additionalParams = { queryParams: { ServiceName } };
+        const body = {};
 
         return this.apigClient.invokeApi(params, pathTemplate, method, additionalParams, body);
     }
 
-    createService(service: ServiceApiModel) {
-        var params = {};
-        var pathTemplate = '/catalog/service';
-        var method = 'POST';
-        var additionalParams = {};
-        var body = service;
+    public createService(service: ServiceApiModel) {
+        const params = {};
+        const pathTemplate = '/catalog/service';
+        const method = 'POST';
+        const additionalParams = {};
+        const body = service;
 
         return this.apigClient.invokeApi(params, pathTemplate, method, additionalParams, body);
     }
 
-    deleteService(id: string) {
-        var params = {};
-        var pathTemplate = '/catalog/service/' + id;
-        var method = 'DELETE';
-        var additionalParams = {};
-        var body = {};
+    public deleteService(id: string) {
+        const params = {};
+        const pathTemplate = '/catalog/service/' + id;
+        const method = 'DELETE';
+        const additionalParams = {};
+        const body = {};
 
         return this.apigClient.invokeApi(params, pathTemplate, method, additionalParams, body);
     }
 }
-

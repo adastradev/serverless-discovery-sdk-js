@@ -1,6 +1,5 @@
-import { ServiceApiModel } from "./ServiceApiModel";
+import { ServiceApiModel } from './ServiceApiModel';
 import { DiscoveryServiceApi } from './DiscoveryServiceApi';
-import { promises } from "fs";
 
 export class DiscoverySdk {
     private api: DiscoveryServiceApi;
@@ -12,9 +11,10 @@ export class DiscoverySdk {
         this.defaultStageName = defaultStageName;
     }
 
-    async lookupService(ServiceName: string) {
-        var result = await this.api.lookupService(ServiceName);
-        var matches = result.data;
+    public async lookupService(ServiceName: string) {
+        const result = await this.api.lookupService(ServiceName);
+        const matches = result.data;
+        // TODO: filter down results based on a desired stage name
         const exactMatch: ServiceApiModel = matches[0] as ServiceApiModel;
         return exactMatch.ServiceURL;
     }

@@ -6,7 +6,8 @@
   "scripts": {
     "build": "./node_modules/.bin/tsc",
     "test": "mocha -r ts-node/register test/integration/**/*.spec.ts",
-    "system-test": "mocha -r ts-node/register test/system/**/*.spec.ts"
+    "system-test": "mocha -r ts-node/register test/system/**/*.spec.ts",
+    "lint": "tslint {source,test}/**/*.ts"
   },
   "keywords": [
     "Serverless",
@@ -26,6 +27,7 @@
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "ts-node": "^7.0.0",
+    "tslint": "^5.11.0",
     "typescript": "^3.0.1",
     "typings": "^2.1.1"
   },
