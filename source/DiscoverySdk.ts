@@ -11,11 +11,9 @@ export class DiscoverySdk {
         this.defaultStageName = defaultStageName;
     }
 
-    public async lookupService(ServiceName: string) {
-        const result = await this.api.lookupService(ServiceName);
+    public async lookupService(ServiceName: string, StageName: string = this.defaultStageName) {
+        const result = await this.api.lookupService(ServiceName, StageName);
         const matches = result.data;
-        // TODO: filter down results based on a desired stage name
-        const exactMatch: ServiceApiModel = matches[0] as ServiceApiModel;
-        return exactMatch.ServiceURL;
+        return result.data.map((item: ServiceApiModel) => item.ServiceURL);
     }
 }

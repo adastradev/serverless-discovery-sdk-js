@@ -5,4 +5,3 @@ export interface ServiceApiModel {
     StageName: string;
     ServiceURL: string;
 }
-

@@ -13,6 +13,7 @@
   "exclude": [
     ".vscode",
     "node_modules",
-    "./test"
+    "./test",
+    "./dist"
   ]
 }
