@@ -1,8 +1,8 @@
 export interface ApiCredentials {
-    type: ApiCredentialType
+    type: ApiCredentialType;
 }
 
 export type ApiCredentialType =
     'None' |
     'IAM' |
-    'BearerToken'
+    'BearerToken';

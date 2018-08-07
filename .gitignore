@@ -4,3 +4,5 @@ jspm_packages/
 typings/
 .npm
 *.tgz
+config.ts
+.vscode
