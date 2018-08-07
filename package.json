@@ -1,8 +1,9 @@
 {
   "name": "@adastradev/serverless-discovery-sdk",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "Serverless Service Discovery API",
   "main": "dist/index.js",
+  "types": "dist/index",
   "scripts": {
     "build": "./node_modules/.bin/tsc",
     "test": "mocha -r ts-node/register test/integration/**/*.spec.ts",
