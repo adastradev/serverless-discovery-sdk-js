@@ -4,3 +4,4 @@ export * from './DiscoverySdk';
 export * from './DiscoveryServiceApi';
 export * from './IAMCredentials';
 export * from './ServiceApiModel';
+export * from './IAMCredentialsEnvironmentVariables';
