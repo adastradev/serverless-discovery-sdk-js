@@ -19,8 +19,6 @@ pipelines:
             # Run system tests
             - . ./pipeline/run-system-tests.sh
 
-            # Publish npm package
-            - npm run-script ci-publish
 
 
       
@@ -35,6 +33,4 @@ pipelines:
 
             # Run system tests
             - . ./pipeline/run-system-tests.sh
-
-            # Do not publish feature branch packages to NPM
 
