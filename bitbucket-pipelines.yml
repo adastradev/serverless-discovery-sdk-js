@@ -3,10 +3,38 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: atlassian/default-image:2
+image: node:8.9.4
 
 pipelines:
-  default:
-    - step:
-        script:
-          - echo "Everything is awesome!"
+  branches:
+    master:
+      - step:
+          script:
+            # Install module dependencies
+            - npm install
+
+            # Run integration tests
+            - npm run test
+
+            # Run system tests
+            - . ./pipeline/run-system-tests.sh
+
+            # Publish npm package
+            - npm run-script ci-publish
+
+
+      
+    feature/*:
+      - step:
+          script:
+            # Install module dependencies
+            - npm install
+
+            # Run integration tests
+            - npm run test
+
+            # Run system tests
+            - . ./pipeline/run-system-tests.sh
+
+            # Do not publish feature branch packages to NPM
+
