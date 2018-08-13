@@ -13,9 +13,6 @@ pipelines:
             # Install module dependencies
             - npm install
 
-            # Run integration tests
-            - npm run test
-
             # Run system tests
             - . ./pipeline/run-system-tests.sh
 
@@ -34,9 +31,6 @@ pipelines:
           script:
             # Install module dependencies
             - npm install
-
-            # Run integration tests
-            - npm run test
 
             # Run system tests
             - . ./pipeline/run-system-tests.sh
