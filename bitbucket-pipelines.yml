@@ -19,6 +19,13 @@ pipelines:
             # Run system tests
             - . ./pipeline/run-system-tests.sh
 
+            # Publish package
+            - npm publish --access=public
+
+            
+
+
+
 
 
       

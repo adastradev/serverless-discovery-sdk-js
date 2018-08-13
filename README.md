@@ -11,6 +11,12 @@ This project contains the Typescript/Javascript bindings for the discovery servi
 npm install @adastradev/serverless-discovery-sdk
 ```
 ## Usage
+
+## Deployment Guide
+This project uses a Continuous Deployment pipeline to deploy directly into an AWS account. If desired, forking the repository to a free Bitbucket account is the easiest way to run the pipeline. The pipeline depends on the following environment variables:
+* AWS_REGION
+* DISCOVERY_SERVICE_ENDPOINT
+
 ### Javascript
 ```javascript
 var DiscoverySdk = require('@adastradev/serverless-discovery-sdk').DiscoverySdk;
