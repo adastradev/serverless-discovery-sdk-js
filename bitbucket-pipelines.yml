@@ -19,13 +19,7 @@ pipelines:
             # Publish package
             - npm publish --access=public
 
-            
-
-
-
-
-
-      
+         
     feature/*:
       - step:
           script:
