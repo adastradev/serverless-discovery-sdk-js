@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import { DiscoverySdk } from '../../source/DiscoverySdk';
 import { DiscoveryServiceApi } from '../../source/DiscoveryServiceApi';
+import { IAMCredentialsEnvironmentVariables } from '../../source/IAMCredentialsEnvironmentVariables';
 import { ServiceApiModel } from '../../source/ServiceApiModel';
 import { Config } from './config';
 
@@ -10,7 +11,7 @@ const should = chai.should();
 describe('DiscoverySdk', () => {
     const api = new DiscoveryServiceApi(Config.discovery_service_endpoint,
         Config.aws_region,
-        { type: 'None' });
+        new IAMCredentialsEnvironmentVariables());
     let createdService: ServiceApiModel;
 
     beforeEach(async () => {
