@@ -2,3 +2,5 @@ source
 test
 config.ts
 .vscode
+tsconfig.json
+tslint.json
