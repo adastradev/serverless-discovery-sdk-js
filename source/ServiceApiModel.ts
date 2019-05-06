@@ -4,4 +4,6 @@ export interface ServiceApiModel {
     ServiceName: string;
     StageName: string;
     ServiceURL: string;
+    Version?: string;
+    ExternalID?: string;
 }
