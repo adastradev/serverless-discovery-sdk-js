@@ -56,11 +56,11 @@ export class DiscoveryServiceApi {
         return this.apigClient.invokeApi(params, pathTemplate, method, additionalParams, body);
     }
 
-    public lookupService(ServiceName: string, StageName: string = '') {
+    public lookupService(serviceName: string, stageName: string = '', version: string = '', externalID: string = '') {
         const params = {};
         const pathTemplate = '/catalog/service';
         const method = 'GET';
-        const additionalParams = { queryParams: { ServiceName, StageName } };
+        const additionalParams = { queryParams: { 'ServiceName': serviceName, 'StageName': stageName, 'Version': version, 'ExternalID': externalID } };
         const body = {};
 
         return this.apigClient.invokeApi(params, pathTemplate, method, additionalParams, body);
