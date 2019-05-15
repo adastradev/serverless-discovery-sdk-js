@@ -7,8 +7,8 @@ pipelines:
           script:
             # setup
             - export DISCOVERY_SERVICE=$DISCOVERY_SERVICE_PROD
-            - export AWS_DISCOVERY_ACCESS_KEY_ID=$AWS_DISCOVERY_ACCESS_KEY_ID_PROD
-            - export AWS_DISCOVERY_SECRET_ACCESS_KEY=$AWS_DISCOVERY_SECRET_ACCESS_KEY_PROD
+            - export AWS_ACCESS_KEY_ID=$AWS_DISCOVERY_ACCESS_KEY_ID_PROD
+            - export AWS_SECRET_ACCESS_KEY=$AWS_DISCOVERY_SECRET_ACCESS_KEY_PROD
 
             # Install module dependencies
             - npm install
@@ -17,8 +17,8 @@ pipelines:
             - npm run unit-test
 
             # Run system tests
-            - sed -e "s|DISCOVERY_SERVICE|$DISCOVERY_SERVICE|" test/integration/config.ts.sample > test/integration/config.ts
-            - sed -i "s|AWS_REGION|$AWS_REGION|" test/integration/config.ts
+            - sed -e "s|DISCOVERY_SERVICE|$DISCOVERY_SERVICE|" test/system/config.ts.sample > test/system/config.ts
+            - sed -i "s|AWS_REGION|$AWS_REGION|" test/system/config.ts
             - npm run system-test
 
             # Publish package
@@ -29,10 +29,9 @@ pipelines:
       - step:
           script:
             # setup
-            - export DISCOVERY_SERVICE=https://b9lh0j97t9.execute-api.us-east-1.amazonaws.com/feattenantve
-            # - export DISCOVERY_SERVICE=$DISCOVERY_SERVICE_DEV
-            - export AWS_DISCOVERY_ACCESS_KEY_ID=$AWS_DISCOVERY_ACCESS_KEY_ID_DEV
-            - export AWS_DISCOVERY_SECRET_ACCESS_KEY=$AWS_DISCOVERY_SECRET_ACCESS_KEY_DEV
+            - export DISCOVERY_SERVICE=$DISCOVERY_SERVICE_DEV
+            - export AWS_ACCESS_KEY_ID=$AWS_DISCOVERY_ACCESS_KEY_ID_DEV
+            - export AWS_SECRET_ACCESS_KEY=$AWS_DISCOVERY_SECRET_ACCESS_KEY_DEV
 
             # Install module dependencies
             - npm install
@@ -41,6 +40,6 @@ pipelines:
             - npm run unit-test
 
             # Run system tests
-            - sed -e "s|DISCOVERY_SERVICE|$DISCOVERY_SERVICE|" test/integration/config.ts.sample > test/integration/config.ts
-            - sed -i "s|AWS_REGION|$AWS_REGION|" test/integration/config.ts
+            - sed -e "s|DISCOVERY_SERVICE|$DISCOVERY_SERVICE|" test/system/config.ts.sample > test/system/config.ts
+            - sed -i "s|AWS_REGION|$AWS_REGION|" test/system/config.ts
             - npm run system-test
