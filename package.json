@@ -6,8 +6,9 @@
   "types": "dist/index",
   "scripts": {
     "build": "./node_modules/.bin/tsc",
-    "test": "mocha -r ts-node/register test/integration/**/*.spec.ts",
+    "unit-test": "mocha -r ts-node/register test/unit/**/*.spec.ts",
     "system-test": "mocha -r ts-node/register test/system/**/*.spec.ts",
+    "integration-test": "mocha -r ts-node/register test/integration/**/*.spec.ts",
     "lint": "tslint {source,test}/**/*.ts"
   },
   "keywords": [
