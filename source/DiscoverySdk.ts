@@ -35,6 +35,14 @@ export class DiscoverySdk {
                                stageName: string = this.defaultStageName,
                                version: string = '',
                                externalID: string = '') {
+        // If version hasn't been specified, try to find one from the cloudDependencies
+        if (!version) {
+            const cloudDep = this.getDependency(serviceName);
+            if (cloudDep) {
+                version = cloudDep.version;
+            }
+        }
+
         const result = await this.api.lookupService(serviceName, stageName, version, externalID);
         return result.data.map((item: ServiceApiModel) => item.ServiceURL);
     }
@@ -58,7 +66,7 @@ export class DiscoverySdk {
         if (config.hasOwnProperty('cloudDependencies')) {
             for (const key in config.cloudDependencies) {
                 if (config.cloudDependencies.hasOwnProperty(key)) {
-                    this.cloudDependencies.set(key, {name: key, version: config.cloudDependencies.key});
+                    this.cloudDependencies.set(key, {name: key, version: config.cloudDependencies[key]});
                 }
             }
         }
