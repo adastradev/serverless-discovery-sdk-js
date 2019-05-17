@@ -52,7 +52,7 @@ export class DiscoverySdk {
             this.readConfig(configPath);
         } else {
             // Look for the package.json file in the root project folder
-            const basePackagePath = finder(module).next().filename;
+            const basePackagePath = finder().next().filename;
             if (basePackagePath) {
                 this.readConfig(basePackagePath);
             }
