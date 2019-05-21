@@ -1,12 +1,45 @@
-# This is a sample build configuration for Other.
-# Check our guides at https://confluence.atlassian.com/x/5Q4SMw for more examples.
-# Only use spaces to indent your .yml configuration.
-# -----
-# You can specify a custom docker image from Docker Hub as your build environment.
-image: atlassian/default-image:2
+image: node:8.9.4
 
 pipelines:
-  default:
-    - step:
-        script:
-          - echo "Everything is awesome!"
+  branches:
+    master:
+      - step:
+          script:
+            # setup
+            - export DISCOVERY_SERVICE=$DISCOVERY_SERVICE_PROD
+            - export AWS_ACCESS_KEY_ID=$AWS_DISCOVERY_ACCESS_KEY_ID_PROD
+            - export AWS_SECRET_ACCESS_KEY=$AWS_DISCOVERY_SECRET_ACCESS_KEY_PROD
+
+            # Install module dependencies
+            - npm install
+
+            # Run unit tests
+            - npm run unit-test
+
+            # Run system tests
+            - sed -e "s|DISCOVERY_SERVICE|$DISCOVERY_SERVICE|" test/system/config.ts.sample > test/system/config.ts
+            - sed -i "s|AWS_REGION|$AWS_REGION|" test/system/config.ts
+            - npm run system-test
+
+            # Publish package
+            - npm publish --access=public
+
+
+    feature/*:
+      - step:
+          script:
+            # setup
+            - export DISCOVERY_SERVICE=$DISCOVERY_SERVICE_DEV
+            - export AWS_ACCESS_KEY_ID=$AWS_DISCOVERY_ACCESS_KEY_ID_DEV
+            - export AWS_SECRET_ACCESS_KEY=$AWS_DISCOVERY_SECRET_ACCESS_KEY_DEV
+
+            # Install module dependencies
+            - npm install
+
+            # Run unit tests
+            - npm run unit-test
+
+            # Run system tests
+            - sed -e "s|DISCOVERY_SERVICE|$DISCOVERY_SERVICE|" test/system/config.ts.sample > test/system/config.ts
+            - sed -i "s|AWS_REGION|$AWS_REGION|" test/system/config.ts
+            - npm run system-test
