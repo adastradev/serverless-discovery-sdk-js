@@ -14,6 +14,7 @@ describe('DiscoverySdk', () => {
     const SERVICE_URL1 = 'https://discovery-sdk-js1';
     const SERVICE_URL2 = 'https://discovery-sdk-js2';
     const SERVICE_URL3 = 'https://discovery-sdk-js3';
+    const SERVICE_URL4 = 'https://discovery-sdk-js4';
     const STAGE1 = 'staging';
     const registeredServices: string[] = [];
 
@@ -39,6 +40,11 @@ describe('DiscoverySdk', () => {
             StageName: STAGE1,
             Version: '1.0.1'
         })).data.ServiceID);
+        registeredServices.push((await api.createService({
+            ServiceName: SERVICE_NAME,
+            ServiceURL: SERVICE_URL4,
+            Version: '2.0.0-staged'
+        })).data.ServiceID);
 
         for (const svcId of registeredServices) {
             console.log('Registered: ' + svcId);
@@ -55,7 +61,7 @@ describe('DiscoverySdk', () => {
 
     describe('When configured with a live discovery service endpoint', () => {
 
-        it('should find a registered service by name only and receive highest version', async () => {
+        it('Should find a registered service by name only and receive highest version', async () => {
             const sdk: DiscoverySdk = new DiscoverySdk(
                 Config.discovery_service_endpoint,
                 Config.aws_region);
@@ -65,7 +71,7 @@ describe('DiscoverySdk', () => {
             expect(endpoints[0]).is.equal(SERVICE_URL2);
         });
 
-        it('should find a registered service by name and stage', async () => {
+        it('Should find a registered service by name and stage', async () => {
             const sdk: DiscoverySdk = new DiscoverySdk(
                 Config.discovery_service_endpoint,
                 Config.aws_region);
@@ -74,7 +80,7 @@ describe('DiscoverySdk', () => {
             expect(endpoints[0]).is.equal(SERVICE_URL3);
         });
 
-        it('should use version specified in config when specifying name only', async () => {
+        it('Should use version specified in config when specifying name only', async () => {
             const packageContents =
                 `{"version": "1.0.0", "cloudDependencies": {"${SERVICE_NAME}": "1.0.1", "package2": "1.2.x"}}`;
             const configFile = tmp.fileSync();
@@ -82,12 +88,45 @@ describe('DiscoverySdk', () => {
             const sdk: DiscoverySdk = new DiscoverySdk(
                 Config.discovery_service_endpoint,
                 Config.aws_region,
-                '',
+                undefined,
+                undefined,
                 configFile.name);
 
             // Query for service with version 1.0.1 in config file.
             const endpoints = await sdk.lookupService(SERVICE_NAME);
             expect(endpoints[0]).is.equal(SERVICE_URL3);
+        });
+
+        it('Should find a registered service by name and version', async () => {
+            const sdk: DiscoverySdk = new DiscoverySdk(
+                Config.discovery_service_endpoint,
+                Config.aws_region);
+            const endpoints = await sdk.lookupService(SERVICE_NAME, undefined, '1.0.1');
+            expect(endpoints.length).is.equal(1);
+            expect(endpoints[0]).is.equal(SERVICE_URL3);
+
+        });
+
+        it('Should append version postfix defined in the constructor', async () => {
+            const sdk: DiscoverySdk = new DiscoverySdk(
+                Config.discovery_service_endpoint,
+                Config.aws_region,
+                undefined,
+                '-staged');
+            const endpoints = await sdk.lookupService(SERVICE_NAME, undefined, '2.0.0');
+            expect(endpoints.length).is.equal(1);
+            expect(endpoints[0]).is.equal(SERVICE_URL4);
+
+        });
+
+        it('Should append version postfix defined in an environment variable', async () => {
+            process.env.VERSION_POSTFIX = '-staged';
+            const sdk: DiscoverySdk = new DiscoverySdk(
+                Config.discovery_service_endpoint,
+                Config.aws_region);
+            const endpoints = await sdk.lookupService(SERVICE_NAME, undefined, '2.0.0');
+            expect(endpoints.length).is.equal(1);
+            expect(endpoints[0]).is.equal(SERVICE_URL4);
         });
     });
 });

@@ -11,7 +11,12 @@ describe('DiscoverySdk', () => {
         const configFile = tmp.fileSync();
         fs.writeFileSync(configFile.name, packageContents);
 
-        const sdk = new DiscoverySdk('https://foo.com/bar', '', '', configFile.name);
+        const sdk = new DiscoverySdk(
+            'https://foo.com/bar',
+            undefined,
+            undefined,
+            undefined,
+            configFile.name);
 
         const cloudDependencies = sdk.cloudDependencyNames;
         expect(cloudDependencies).contains('package1');

@@ -10,16 +10,27 @@ export interface ICloudDependency {
 
 export class DiscoverySdk {
     private api: DiscoveryServiceApi;
-    private defaultStageName: string;
+    private readonly defaultStageName?: string;
+    // Allows version number modification as needed for unique environments
+    private readonly lookupVersionPostfix?: string;
     private cloudDependencies = new Map<string, ICloudDependency>();
 
     constructor(serviceEndpointUri: string,
-                region: string = 'us-east-1',
-                defaultStageName: string = '',
-                configPath: string = '') {
-        this.api = new DiscoveryServiceApi(serviceEndpointUri, region, { type: 'None' });
+                region?: string,
+                defaultStageName?: string,
+                lookupVersionPostfix?: string,
+                configPath?: string) {
+
+        this.api = new DiscoveryServiceApi(serviceEndpointUri, region || 'us-east-1', { type: 'None' });
         // TODO: attempt to look up stage name from an environment variable
         this.defaultStageName = defaultStageName;
+
+        // If the provided lookupVersionPostfix is undefined, try to find it in an environment variable.
+        if (!lookupVersionPostfix) {
+            lookupVersionPostfix = process.env.VERSION_POSTFIX;
+        }
+
+        this.lookupVersionPostfix = lookupVersionPostfix;
         this.populateDependencies(configPath);
     }
 
@@ -32,9 +43,14 @@ export class DiscoverySdk {
     }
 
     public async lookupService(serviceName: string,
-                               stageName: string = this.defaultStageName,
-                               version: string = '',
-                               externalID: string = '') {
+                               stageName?: string,
+                               version?: string,
+                               externalID?: string) {
+
+        if (!stageName) {
+            stageName = this.defaultStageName;
+        }
+
         // If version hasn't been specified, try to find one from the cloudDependencies
         if (!version) {
             const cloudDep = this.getDependency(serviceName);
@@ -43,12 +59,20 @@ export class DiscoverySdk {
             }
         }
 
+        if (version && this.lookupVersionPostfix) {
+            version = version + this.lookupVersionPostfix;
+        }
+
+        if (!externalID) {
+            externalID = '';
+        }
+
         const result = await this.api.lookupService(serviceName, stageName, version, externalID);
         return result.data.map((item: ServiceApiModel) => item.ServiceURL);
     }
 
-    private populateDependencies(configPath: string) {
-        if (configPath.length > 0) {
+    private populateDependencies(configPath?: string) {
+        if (configPath !== undefined) {
             this.readConfig(configPath);
         } else {
             // Look for the package.json file in the root project folder
