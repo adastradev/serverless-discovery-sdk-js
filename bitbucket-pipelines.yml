@@ -13,6 +13,9 @@ pipelines:
             # Install module dependencies
             - npm install
 
+            # Build
+            - npm run build
+
             # Run unit tests
             - npm run unit-test
 
@@ -35,6 +38,9 @@ pipelines:
 
             # Install module dependencies
             - npm install
+
+            # Build
+            - npm run build
 
             # Run unit tests
             - npm run unit-test
