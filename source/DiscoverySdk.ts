@@ -20,7 +20,8 @@ export class DiscoverySdk {
                 region?: string,
                 defaultStageName?: string,
                 lookupVersionPostfix?: string,
-                configPath?: string) {
+                configPath?: string,
+                cloudDeps?: Map<string, string>) {
 
         this.api = new DiscoveryServiceApi(serviceEndpointUri, region || 'us-east-1', { type: 'None' });
         // TODO: attempt to look up stage name from an environment variable
@@ -31,11 +32,13 @@ export class DiscoverySdk {
             lookupVersionPostfix = process.env.VERSION_POSTFIX;
             if (lookupVersionPostfix) {
                 console.log(`DEBUG: Using VERSION_POSTFIX=${lookupVersionPostfix}`);
+            } else {
+                console.log('DEBUG: VERSION_POSTFIX not found');
             }
         }
 
         this.lookupVersionPostfix = lookupVersionPostfix;
-        this.populateDependencies(configPath);
+        this.populateDependencies(configPath, cloudDeps);
     }
 
     get cloudDependencyNames() {
@@ -66,8 +69,8 @@ export class DiscoverySdk {
         }
 
         if (version && this.lookupVersionPostfix) {
-            version = version + this.lookupVersionPostfix;
-            console.log(`DEBUG: Version updated with prefix: ${version}`);
+            version += this.lookupVersionPostfix;
+            console.log(`DEBUG: Version updated with postfix: ${version}`);
         }
 
         if (!externalID) {
@@ -78,7 +81,16 @@ export class DiscoverySdk {
         return result.data.map((item: ServiceApiModel) => item.ServiceURL);
     }
 
-    private populateDependencies(configPath?: string) {
+    private populateDependencies(configPath?: string, cloudDeps?: Map<string, string>) {
+        // Can provide all of dependencies or be overridden by a config file.
+        if (cloudDeps) {
+            console.log(`DEBUG: Passed cloudDeps`);
+            console.log(cloudDeps);
+            for (const key of Array.from(cloudDeps.keys())) {
+                this.cloudDependencies.set(key, {name: key, version: cloudDeps.get(key)!});
+            }
+        }
+
         console.log(`DEBUG: populateDependencies: (configPath: ${configPath})`);
         if (configPath !== undefined) {
             this.readConfig(configPath);
