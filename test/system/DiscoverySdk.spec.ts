@@ -1,6 +1,4 @@
 import * as chai from 'chai';
-import * as tmp from 'tmp';
-import * as fs from 'fs';
 import { Config } from './config';
 import {
     DiscoverySdk,
@@ -60,40 +58,12 @@ describe('DiscoverySdk', () => {
     });
 
     describe('When configured with a live discovery service endpoint', () => {
-
-        it('Should find a registered service by name only and receive highest version', async () => {
-            const sdk: DiscoverySdk = new DiscoverySdk(
-                Config.discovery_service_endpoint,
-                Config.aws_region);
-
-            const endpoints = await sdk.lookupService(SERVICE_NAME);
-            expect(endpoints.length).is.equal(1);
-            expect(endpoints[0]).is.equal(SERVICE_URL2);
-        });
-
         it('Should find a registered service by name and stage', async () => {
             const sdk: DiscoverySdk = new DiscoverySdk(
                 Config.discovery_service_endpoint,
                 Config.aws_region);
             const endpoints = await sdk.lookupService(SERVICE_NAME, STAGE1);
             expect(endpoints.length).is.equal(1);
-            expect(endpoints[0]).is.equal(SERVICE_URL3);
-        });
-
-        it('Should use version specified in config when specifying name only', async () => {
-            const packageContents =
-                `{"version": "1.0.0", "cloudDependencies": {"${SERVICE_NAME}": "1.0.1", "package2": "1.2.x"}}`;
-            const configFile = tmp.fileSync();
-            fs.writeFileSync(configFile.name, packageContents);
-            const sdk: DiscoverySdk = new DiscoverySdk(
-                Config.discovery_service_endpoint,
-                Config.aws_region,
-                undefined,
-                undefined,
-                configFile.name);
-
-            // Query for service with version 1.0.1 in config file.
-            const endpoints = await sdk.lookupService(SERVICE_NAME);
             expect(endpoints[0]).is.equal(SERVICE_URL3);
         });
 
