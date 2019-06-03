@@ -38,7 +38,7 @@ In some testing environments, it can be useful to modify the lookup version to a
 var DiscoverySdk = require('@adastradev/serverless-discovery-sdk').DiscoverySdk;
 var sdk = new DiscoverySdk('https://abcdefghij.execute-api.us-east-1.amazonaws.com/prod', 'us-east-1');
 
-var endpoints = await sdk.lookupService('my-service-name');
+var endpoints = await sdk.lookupService('my-service-name', undefined, '1.x.x');
 ```
 
 ### TypeScript
@@ -46,5 +46,5 @@ var endpoints = await sdk.lookupService('my-service-name');
 import { DiscoverySdk } from '@adastradev/serverless-discovery-sdk';
 const sdk: DiscoverySdk = new DiscoverySdk('https://abcdefghij.execute-api.us-east-1.amazonaws.com/prod', 'us-east-1');
 
-const endpoints = await sdk.lookupService('my-service-name');
+const endpoints = await sdk.lookupService('my-service-name', undefined, '1.x.x');
 

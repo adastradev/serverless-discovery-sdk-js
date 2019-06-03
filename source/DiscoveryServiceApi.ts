@@ -63,6 +63,11 @@ export class DiscoveryServiceApi {
         const additionalParams = { queryParams: { ServiceName: serviceName, StageName: stageName, Version: version, ExternalID: externalID } };
         const body = {};
 
+        // We need more than stageName only
+        if (stageName === '' && version === '' && externalID === '') {
+            throw new Error('Must provide more than service name only');
+        }
+
         return this.apigClient.invokeApi(params, pathTemplate, method, additionalParams, body);
     }
 
