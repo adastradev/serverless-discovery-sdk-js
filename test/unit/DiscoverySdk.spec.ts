@@ -52,6 +52,25 @@ describe('DiscoverySdk', () => {
         expect(passed).equal(false);
     });
 
+    it('Expect a call using a stage name with cloudDependencies version to throw an Error', async () => {
+        const cloudDependencies = new Map<string, string>();
+        cloudDependencies.set('foo', '1.x');
+
+        const sdk = new DiscoverySdk('https://foo.com/bar', undefined, undefined, undefined,
+            cloudDependencies);
+
+        let passed = false;
+
+        try {
+            await sdk.lookupService('foo', 'stage-name');
+            passed = true;
+        } catch (e) {
+            expect(e.message).equal('Providing a stageName along with version or externalID is not compatible');
+        }
+
+        expect(passed).equal(false);
+    });
+
     it('Expect a call using a stage name with externalID to throw an Error', async () => {
         const sdk = new DiscoverySdk('https://foo.com/bar');
 

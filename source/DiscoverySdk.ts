@@ -42,6 +42,11 @@ export class DiscoverySdk {
                                version?: string,
                                externalID?: string) {
 
+        // If version hasn't been specified, try to find one from the cloudDependencies
+        if (!version) {
+            version = this.cloudDependencies.get(serviceName);
+        }
+
         // Only use the default stageName if other filters are not provided
         if (!stageName && !version && !externalID) {
             stageName = this.defaultStageName;
@@ -50,11 +55,6 @@ export class DiscoverySdk {
         // Using a stageName with version or externalID is not compatible
         if (stageName && (version || externalID)) {
             throw new Error('Providing a stageName along with version or externalID is not compatible');
-        }
-
-        // If version hasn't been specified, try to find one from the cloudDependencies
-        if (!version) {
-            version = this.cloudDependencies.get(serviceName);
         }
 
         if (version && this.lookupVersionPostfix) {
