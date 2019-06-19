@@ -33,18 +33,29 @@ When using the `cloudDependencies` method, only the service name needs to be pro
 
 In some testing environments, it can be useful to modify the lookup version to avoid collision with a production environment.  For example, the service "foo" with version "1.0.0" can instead query version "1.0.0-staging".  To enable this feature at runtime, set the environment variable `VERSION_POSTFIX` to the desired value.  In this case it would be set to `-staging`.  This can especially be useful when using `cloudDependencies` to select service versions.  
 
-### Javascript
+## Code Example
+
 ```javascript
-var DiscoverySdk = require('@adastradev/serverless-discovery-sdk').DiscoverySdk;
-var sdk = new DiscoverySdk('https://abcdefghij.execute-api.us-east-1.amazonaws.com/prod', 'us-east-1');
-
-var endpoints = await sdk.lookupService('my-service-name', undefined, '1.x.x');
-```
-
-### TypeScript
-```typescript
 import { DiscoverySdk } from '@adastradev/serverless-discovery-sdk';
-const sdk: DiscoverySdk = new DiscoverySdk('https://abcdefghij.execute-api.us-east-1.amazonaws.com/prod', 'us-east-1');
 
-const endpoints = await sdk.lookupService('my-service-name', undefined, '1.x.x');
+export default async function lookup(serviceName) {
+
+  const sdk = new DiscoverySdk(
+    process.env.DISCOVERY_SERVICE_URL,
+    process.env.DISCOVERY_SERVICE_REGION,
+    // Non-versioned services will default to lookup via this stage
+    process.env.DEFAULT_STAGE,
+    undefined,
+    // Create map of cloudDependencies from package.json
+    new Map(Object.entries(require('../path/to/package.json')['cloudDependencies'])),
+  );
+
+  const endpoints = await sdk.lookupService(
+    serviceName
+  );
+
+  return endpoints[0];
+
+}
+```
 
