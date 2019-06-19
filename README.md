@@ -35,6 +35,8 @@ In some testing environments, it can be useful to modify the lookup version to a
 
 ## Code Example
 
+I recommend setting up a utility function to handle construction of the SDK, and the lookup call - see below example.
+
 ```javascript
 import { DiscoverySdk } from '@adastradev/serverless-discovery-sdk';
 
