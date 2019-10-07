@@ -36,7 +36,7 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@adastradev/aws-api-gateway-client": "^0.2.18-beta.1"
+    "@adastradev/aws-api-gateway-client": "^0.2.18-beta.3"
   },
   "files": [
     "/dist"
