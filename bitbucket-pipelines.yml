@@ -11,8 +11,8 @@ pipelines:
             - export AWS_SECRET_ACCESS_KEY=$AWS_DISCOVERY_SECRET_ACCESS_KEY_PROD
 
             # Install module dependencies
-            - npm install
-
+            - npm ci
+            - npm run secure 
             # Build
             - npm run build
 
@@ -37,7 +37,8 @@ pipelines:
             - export AWS_SECRET_ACCESS_KEY=$AWS_DISCOVERY_SECRET_ACCESS_KEY_DEV
 
             # Install module dependencies
-            - npm install
+            - npm ci
+            - npm run secure 
 
             # Build
             - npm run build
