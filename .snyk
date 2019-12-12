@@ -5,8 +5,16 @@ ignore:
   SNYK-JS-ELLIPTIC-511941:
     - '@adastradev/aws-api-gateway-client > webpack > node-libs-browser > crypto-browserify > browserify-sign > elliptic':
         reason: None given
-        expires: '2020-01-01T18:22:56.353Z'
+        expires: '2020-01-08T16:10:57.550Z'
     - '@adastradev/aws-api-gateway-client > webpack > node-libs-browser > crypto-browserify > create-ecdh > elliptic':
         reason: None given
-        expires: '2020-01-01T18:22:56.353Z'
+        expires: '2020-01-08T16:10:57.550Z'
+  SNYK-JS-SERIALIZEJAVASCRIPT-536840:
+    - '@adastradev/aws-api-gateway-client > webpack > terser-webpack-plugin > serialize-javascript':
+        reason: None given
+        expires: '2020-01-08T16:10:57.550Z'
+  SNYK-JS-TREEKILL-536781:
+    - snyk > snyk-sbt-plugin > tree-kill:
+        reason: None given
+        expires: '2020-01-08T16:10:57.550Z'
 patch: {}

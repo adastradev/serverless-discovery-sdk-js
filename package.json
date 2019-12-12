@@ -10,7 +10,6 @@
     "system-test": "mocha -r ts-node/register --timeout=999999 \"test/system/**/*.spec.ts\"",
     "integration-test": "mocha -r ts-node/register \"test/integration/**/*.spec.ts\"",
     "lint": "tslint {source,test}/**/*.ts",
-    "test": "snyk test",
     "secure": "gulp secure"
   },
   "keywords": [
