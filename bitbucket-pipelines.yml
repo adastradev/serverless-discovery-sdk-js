@@ -39,7 +39,7 @@ pipelines:
             # Install module dependencies
             - npm ci
             - npm run secure 
-
+            
             # Build
             - npm run build
 

@@ -1,6 +1,6 @@
 {
   "name": "@adastradev/serverless-discovery-sdk",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Serverless Service Discovery API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,6 +43,7 @@
     "@adastradev/aws-api-gateway-client": "^0.2.18-beta.3",
     "snyk": "^1.251.2"
   },
+  "snyk": true,
   "files": [
     "/dist"
   ]
