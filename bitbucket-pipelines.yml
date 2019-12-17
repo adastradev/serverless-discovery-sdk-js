@@ -12,7 +12,8 @@ pipelines:
 
             # Install module dependencies
             - npm ci
-            - npm run secure 
+            - npm run lint
+            - npm run secure
             # Build
             - npm run build
 
@@ -38,8 +39,9 @@ pipelines:
 
             # Install module dependencies
             - npm ci
-            - npm run secure 
-            
+            - npm run lint
+            - npm run secure
+
             # Build
             - npm run build
 

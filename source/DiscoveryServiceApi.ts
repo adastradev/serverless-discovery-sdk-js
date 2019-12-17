@@ -60,7 +60,9 @@ export class DiscoveryServiceApi {
         const params = {};
         const pathTemplate = '/catalog/service';
         const method = 'GET';
-        const additionalParams = { queryParams: { ServiceName: serviceName, StageName: stageName, Version: version, ExternalID: externalID } };
+        const additionalParams = {
+            queryParams: { ServiceName: serviceName, StageName: stageName, Version: version, ExternalID: externalID }
+        };
         const body = {};
 
         // We need more than stageName only
