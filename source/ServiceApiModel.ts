@@ -1,3 +1,4 @@
+// tslint:disable-next-line: interface-name
 export interface ServiceApiModel {
     ServiceID?: string;
     CreatedAt?: Date;

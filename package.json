@@ -1,6 +1,6 @@
 {
   "name": "@adastradev/serverless-discovery-sdk",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Serverless Service Discovery API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,7 +9,8 @@
     "unit-test": "mocha -r ts-node/register \"test/unit/**/*.spec.ts\"",
     "system-test": "mocha -r ts-node/register --timeout=999999 \"test/system/**/*.spec.ts\"",
     "integration-test": "mocha -r ts-node/register \"test/integration/**/*.spec.ts\"",
-    "lint": "tslint {source,test}/**/*.ts"
+    "lint": "tslint {source,test}/**/*.ts",
+    "secure": "gulp secure"
   },
   "keywords": [
     "Serverless",
@@ -23,21 +24,26 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@adastradev/gulp-snyk": "^1.0.0",
     "@types/app-root-path": "^1.2.4",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/node": "^12.0.0",
     "@types/tmp": "^0.1.0",
     "chai": "^4.2.0",
+    "gulp": "^4.0.2",
     "mocha": "^6.1.4",
     "tmp": "^0.1.0",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
+    "tslint-config-security": "^1.16.0",
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@adastradev/aws-api-gateway-client": "^0.2.18-beta.3"
+    "@adastradev/aws-api-gateway-client": "^0.2.18-beta.3",
+    "snyk": "^1.251.2"
   },
+  "snyk": true,
   "files": [
     "/dist"
   ]
