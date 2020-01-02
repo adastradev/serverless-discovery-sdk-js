@@ -5,7 +5,7 @@ import { BearerTokenCredentials } from './BearerTokenCredentials';
 
 // ignore type checking for private member aws-api-gateway-client for now
 declare function require(name:string): any; // tslint:disable-line
-const apigClientFactory: any = require('aws-api-gateway-client').default; // tslint:disable-line
+const apigClientFactory: any = require('@adastradev/aws-api-gateway-client').default; // tslint:disable-line
 
 export class DiscoveryServiceApi {
     // TODO: create an interface for client to allow plugging in clients for cloud providers other than AWS
@@ -60,8 +60,15 @@ export class DiscoveryServiceApi {
         const params = {};
         const pathTemplate = '/catalog/service';
         const method = 'GET';
-        const additionalParams = { queryParams: { ServiceName: serviceName, StageName: stageName, Version: version, ExternalID: externalID } };
+        const additionalParams = {
+            queryParams: { ServiceName: serviceName, StageName: stageName, Version: version, ExternalID: externalID }
+        };
         const body = {};
+
+        // We need more than stageName only
+        if (stageName === '' && version === '' && externalID === '') {
+            throw new Error('Must provide more than service name only');
+        }
 
         return this.apigClient.invokeApi(params, pathTemplate, method, additionalParams, body);
     }

@@ -1,6 +1,4 @@
 import * as chai from 'chai';
-import * as tmp from 'tmp';
-import * as fs from 'fs';
 import { Config } from './config';
 import {
     DiscoverySdk,
@@ -15,6 +13,7 @@ describe('DiscoverySdk', () => {
     const SERVICE_URL2 = 'https://discovery-sdk-js2';
     const SERVICE_URL3 = 'https://discovery-sdk-js3';
     const SERVICE_URL4 = 'https://discovery-sdk-js4';
+    const SERVICE_URL5 = 'https://discovery-sdk-js5';
     const STAGE1 = 'staging';
     const registeredServices: string[] = [];
 
@@ -45,10 +44,20 @@ describe('DiscoverySdk', () => {
             ServiceURL: SERVICE_URL4,
             Version: '2.0.0-staged'
         })).data.ServiceID);
+        registeredServices.push((await api.createService({
+            ServiceName: 'defaultTestService',
+            ServiceURL: SERVICE_URL5,
+            StageName: 'sys-test-stage',
+            Version: '1.5.0'
+        })).data.ServiceID);
 
         for (const svcId of registeredServices) {
             console.log('Registered: ' + svcId);
         }
+    });
+
+    beforeEach(() => {
+        process.env.VERSION_POSTFIX = '';
     });
 
     after(async () => {
@@ -60,40 +69,12 @@ describe('DiscoverySdk', () => {
     });
 
     describe('When configured with a live discovery service endpoint', () => {
-
-        it('Should find a registered service by name only and receive highest version', async () => {
-            const sdk: DiscoverySdk = new DiscoverySdk(
-                Config.discovery_service_endpoint,
-                Config.aws_region);
-
-            const endpoints = await sdk.lookupService(SERVICE_NAME);
-            expect(endpoints.length).is.equal(1);
-            expect(endpoints[0]).is.equal(SERVICE_URL2);
-        });
-
         it('Should find a registered service by name and stage', async () => {
             const sdk: DiscoverySdk = new DiscoverySdk(
                 Config.discovery_service_endpoint,
                 Config.aws_region);
             const endpoints = await sdk.lookupService(SERVICE_NAME, STAGE1);
             expect(endpoints.length).is.equal(1);
-            expect(endpoints[0]).is.equal(SERVICE_URL3);
-        });
-
-        it('Should use version specified in config when specifying name only', async () => {
-            const packageContents =
-                `{"version": "1.0.0", "cloudDependencies": {"${SERVICE_NAME}": "1.0.1", "package2": "1.2.x"}}`;
-            const configFile = tmp.fileSync();
-            fs.writeFileSync(configFile.name, packageContents);
-            const sdk: DiscoverySdk = new DiscoverySdk(
-                Config.discovery_service_endpoint,
-                Config.aws_region,
-                undefined,
-                undefined,
-                configFile.name);
-
-            // Query for service with version 1.0.1 in config file.
-            const endpoints = await sdk.lookupService(SERVICE_NAME);
             expect(endpoints[0]).is.equal(SERVICE_URL3);
         });
 
@@ -104,7 +85,6 @@ describe('DiscoverySdk', () => {
             const endpoints = await sdk.lookupService(SERVICE_NAME, undefined, '1.0.1');
             expect(endpoints.length).is.equal(1);
             expect(endpoints[0]).is.equal(SERVICE_URL3);
-
         });
 
         it('Should append version postfix defined in the constructor', async () => {
@@ -127,6 +107,30 @@ describe('DiscoverySdk', () => {
             const endpoints = await sdk.lookupService(SERVICE_NAME, undefined, '2.0.0');
             expect(endpoints.length).is.equal(1);
             expect(endpoints[0]).is.equal(SERVICE_URL4);
+        });
+
+        it("Should find a service based on defaultStageName if cloudDependencies isn't found", async () => {
+            const sdk: DiscoverySdk = new DiscoverySdk(
+                Config.discovery_service_endpoint,
+                Config.aws_region,
+                'sys-test-stage',
+                undefined,
+                new Map([['blah', '1.x']]));
+            const endpoints = await sdk.lookupService('defaultTestService');
+            expect(endpoints.length).is.equal(1);
+            expect(endpoints[0]).is.equal(SERVICE_URL5);
+        });
+
+        it('Should find a service based on version if cloudDependencies found', async () => {
+            const sdk: DiscoverySdk = new DiscoverySdk(
+                Config.discovery_service_endpoint,
+                Config.aws_region,
+                'sys-test-version',
+                undefined,
+                new Map([['defaultTestService', '1.x']]));
+            const endpoints = await sdk.lookupService('defaultTestService');
+            expect(endpoints.length).is.equal(1);
+            expect(endpoints[0]).is.equal(SERVICE_URL5);
         });
     });
 });

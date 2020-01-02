@@ -1,39 +1,88 @@
 import * as chai from 'chai';
-import * as tmp from 'tmp';
-import * as fs from 'fs';
 import {DiscoverySdk} from '../../source';
 
 const expect = chai.expect;
 
 describe('DiscoverySdk', () => {
-    it('Load config file', () => {
-        const packageContents = '{"version": "1.0.0", "cloudDependencies": {"package1": "1.x.x", "package2": "1.2.x"}}';
-        const configFile = tmp.fileSync();
-        fs.writeFileSync(configFile.name, packageContents);
+    it('Receive cloud dependencies directly', () => {
+        const content = '{"service1": "1.x", "service2": "2.x"}';
+        const contentMapped = new Map(Object.entries(JSON.parse(content)));
 
-        const sdk = new DiscoverySdk(
-            'https://foo.com/bar',
+        const sdk = new DiscoverySdk('https://foo.com/bar',
             undefined,
             undefined,
             undefined,
-            configFile.name);
+            contentMapped);
 
         const cloudDependencies = sdk.cloudDependencyNames;
-        expect(cloudDependencies).contains('package1');
-        expect(cloudDependencies).contains('package2');
-        expect(sdk.getDependency('package1')!.version).equal('1.x.x');
-        expect(sdk.getDependency('package2')!.version).equal('1.2.x');
-
-        configFile.removeCallback();
+        expect(cloudDependencies).contains('service1');
+        expect(cloudDependencies).contains('service2');
+        expect(cloudDependencies.length).equals(2);
+        expect(sdk.getDependency('service1')!).equal('1.x');
+        expect(sdk.getDependency('service2')!).equal('2.x');
     });
 
-    it('No config file', () => {
+    it('Expect lookup of service name only to throw an Error', async () => {
         const sdk = new DiscoverySdk('https://foo.com/bar');
 
-        const cloudDependencies = sdk.cloudDependencyNames;
-        expect(cloudDependencies.length).equals(0);
+        let passed = false;
 
-        const emptyResult = sdk.getDependency('noExist');
-        expect(emptyResult).equal(undefined);
+        try {
+            await sdk.lookupService('foo');
+            passed = true;
+        } catch (e) {
+            expect(e.message).equal('Must provide more than service name only');
+        }
+
+        expect(passed).equal(false);
+    });
+
+    it('Expect a call using a stage name with version to throw an Error', async () => {
+        const sdk = new DiscoverySdk('https://foo.com/bar');
+
+        let passed = false;
+
+        try {
+            await sdk.lookupService('foo', 'stage-name', '1.x');
+            passed = true;
+        } catch (e) {
+            expect(e.message).equal('Providing a stageName along with version or externalID is not compatible');
+        }
+
+        expect(passed).equal(false);
+    });
+
+    it('Expect a call using a stage name with cloudDependencies version to throw an Error', async () => {
+        const cloudDependencies = new Map<string, string>();
+        cloudDependencies.set('foo', '1.x');
+
+        const sdk = new DiscoverySdk('https://foo.com/bar', undefined, undefined, undefined,
+            cloudDependencies);
+
+        let passed = false;
+
+        try {
+            await sdk.lookupService('foo', 'stage-name');
+            passed = true;
+        } catch (e) {
+            expect(e.message).equal('Providing a stageName along with version or externalID is not compatible');
+        }
+
+        expect(passed).equal(false);
+    });
+
+    it('Expect a call using a stage name with externalID to throw an Error', async () => {
+        const sdk = new DiscoverySdk('https://foo.com/bar');
+
+        let passed = false;
+
+        try {
+            await sdk.lookupService('foo', 'stage-name', undefined, 'external-id');
+            passed = true;
+        } catch (e) {
+            expect(e.message).equal('Providing a stageName along with version or externalID is not compatible');
+        }
+
+        expect(passed).equal(false);
     });
 });

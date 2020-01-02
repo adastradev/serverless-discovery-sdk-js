@@ -1,25 +1,18 @@
 import { ServiceApiModel } from './ServiceApiModel';
 import { DiscoveryServiceApi } from './DiscoveryServiceApi';
-import * as finder from 'find-package-json';
-import * as fs from 'fs';
-
-export interface ICloudDependency {
-    name: string;
-    version: string;
-}
 
 export class DiscoverySdk {
     private api: DiscoveryServiceApi;
     private readonly defaultStageName?: string;
     // Allows version number modification as needed for unique environments
     private readonly lookupVersionPostfix?: string;
-    private cloudDependencies = new Map<string, ICloudDependency>();
+    private cloudDependencies = new Map<string, string>();
 
     constructor(serviceEndpointUri: string,
                 region?: string,
                 defaultStageName?: string,
                 lookupVersionPostfix?: string,
-                configPath?: string) {
+                cloudDeps?: Map<string, string>) {
 
         this.api = new DiscoveryServiceApi(serviceEndpointUri, region || 'us-east-1', { type: 'None' });
         // TODO: attempt to look up stage name from an environment variable
@@ -31,7 +24,9 @@ export class DiscoverySdk {
         }
 
         this.lookupVersionPostfix = lookupVersionPostfix;
-        this.populateDependencies(configPath);
+        if (cloudDeps) {
+            this.cloudDependencies = cloudDeps;
+        }
     }
 
     get cloudDependencyNames() {
@@ -47,20 +42,23 @@ export class DiscoverySdk {
                                version?: string,
                                externalID?: string) {
 
-        if (!stageName) {
+        // If version hasn't been specified, try to find one from the cloudDependencies
+        if (!version) {
+            version = this.cloudDependencies.get(serviceName);
+        }
+
+        // Only use the default stageName if other filters are not provided
+        if (!stageName && !version && !externalID) {
             stageName = this.defaultStageName;
         }
 
-        // If version hasn't been specified, try to find one from the cloudDependencies
-        if (!version) {
-            const cloudDep = this.getDependency(serviceName);
-            if (cloudDep) {
-                version = cloudDep.version;
-            }
+        // Using a stageName with version or externalID is not compatible
+        if (stageName && (version || externalID)) {
+            throw new Error('Providing a stageName along with version or externalID is not compatible');
         }
 
         if (version && this.lookupVersionPostfix) {
-            version = version + this.lookupVersionPostfix;
+            version += this.lookupVersionPostfix;
         }
 
         if (!externalID) {
@@ -69,30 +67,5 @@ export class DiscoverySdk {
 
         const result = await this.api.lookupService(serviceName, stageName, version, externalID);
         return result.data.map((item: ServiceApiModel) => item.ServiceURL);
-    }
-
-    private populateDependencies(configPath?: string) {
-        if (configPath !== undefined) {
-            this.readConfig(configPath);
-        } else {
-            // Look for the package.json file in the root project folder
-            const basePackagePath = finder().next().filename;
-            if (basePackagePath) {
-                this.readConfig(basePackagePath);
-            }
-        }
-    }
-
-    private readConfig(configPath: string) {
-        const rawdata = fs.readFileSync(configPath);
-        const config = JSON.parse(rawdata.toString('utf8'));
-
-        if (config.hasOwnProperty('cloudDependencies')) {
-            for (const key in config.cloudDependencies) {
-                if (config.cloudDependencies.hasOwnProperty(key)) {
-                    this.cloudDependencies.set(key, {name: key, version: config.cloudDependencies[key]});
-                }
-            }
-        }
     }
 }

@@ -13,38 +13,70 @@ npm install @adastradev/serverless-discovery-sdk
 ```
 ## Usage
 
-### Environmental
+#### Service/Cloud Dependencies
+Semver versioning is supported by the discovery service 1.1.x. Pass a semver compatible value in the `lookupService` call to receive the newest compatible matching version.
+Services and their desired versions can also be specified in the `cloudDependencies` field of `package.json`.
 
-#### Configured Dependencies
-Semver versioning is supported by the discovery service 1.1.x.  Pass a semver compatible value in the `lookupService` call to receive the newest compatible matching version.
-Services and their desired versions can also be specified in your package.json file.  Enter the values in a `cloudDependencies` section, and populate it in the same format as the standard `dependencies` section.
-When using the `cloudDependencies` method, only the service name needs to be provided in the `lookupService` call.
-
-```json
+```javascript
 {
   "cloudDependencies": {
-    "service1": "1.x.x",
-    "service2": "^1.2.8"
+    "service1": "1.x",
+    "service2": "^1.2.8-testbranch", // A pre-release version for development purposes
+    "service3": "3.x.x"
   }
 }
 ```
 
 #### Version Postfix values
 
-In some testing environments, it can be useful to modify the lookup version to avoid collision with a production environment.  For example, the service "foo" with version "1.0.0" can instead query version "1.0.0-staging".  To enable this feature at runtime, set the environment variable `VERSION_POSTFIX` to the desired value.  In this case it would be set to `-staging`.  This can especially be useful when using `cloudDependencies` to select service versions.  
+In some testing environments, it can be useful to modify the lookup version to avoid collision with a production environment. If the `VERSION_POSTFIX` environment variable at **runtime**, it will always append this to the version of a lookup call. 
 
-### Javascript
-```javascript
-var DiscoverySdk = require('@adastradev/serverless-discovery-sdk').DiscoverySdk;
-var sdk = new DiscoverySdk('https://abcdefghij.execute-api.us-east-1.amazonaws.com/prod', 'us-east-1');
+If you are looking up services which are highly coupled or are not well isolated, and using them for system tests, you should:
 
-var endpoints = await sdk.lookupService('my-service-name');
+- Set the `VERSION_POSTFIX` environment variable set to `-staging`
+- Pass the environment variable through to the runtime where lookups are happening (lambda, docker, etc.)
+
+If there is a lookup for **serviceA**, version `1.1.0`, it will instead only talk to `1.1.0-staging`. All lookup calls will follow a similar pattern while the environment variable is present.
+
+**TL;DR**: If you are looking up services which are not well isolated, and rely on a staging environment to avoid operations on prod databases/resources, add the following to your pipeline in a staging deployment/testing step.
+
+bitbucket-pipelines.yml:
+```bash
+- export VERSION_POSTFIX='-staging'
+# Deployment steps follow...
 ```
 
-### TypeScript
-```typescript
+serverless.yml
+```yaml
+provider:
+  environment:
+    VERSION_POSTFIX: ${env:VERSION_POSTFIX, ''}
+```
+
+## Code Example
+
+I recommend setting up a utility function to handle construction of the SDK, and the lookup call - see below example.
+
+```javascript
 import { DiscoverySdk } from '@adastradev/serverless-discovery-sdk';
-const sdk: DiscoverySdk = new DiscoverySdk('https://abcdefghij.execute-api.us-east-1.amazonaws.com/prod', 'us-east-1');
 
-const endpoints = await sdk.lookupService('my-service-name');
+export default async function lookup(serviceName) {
 
+  const sdk = new DiscoverySdk(
+    process.env.DISCOVERY_SERVICE_URL,
+    process.env.DISCOVERY_SERVICE_REGION,
+    // Non-versioned services will default to lookup via this stage
+    process.env.DEFAULT_STAGE,
+    undefined,
+    // Create map of cloudDependencies from package.json
+    new Map(Object.entries(require('../path/to/package.json')['cloudDependencies'])),
+  );
+
+  const endpoints = await sdk.lookupService(
+    serviceName
+  );
+
+  return endpoints[0];
+
+}
+```
