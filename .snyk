@@ -17,4 +17,8 @@ ignore:
     - snyk > snyk-sbt-plugin > tree-kill:
         reason: None given
         expires: '2020-01-08T16:10:57.550Z'
+  SNYK-JS-KINDOF-537849:
+    - '*':
+        reason: None Given
+        expires: 2020-02-20T17:08:47.259Z
 patch: {}
