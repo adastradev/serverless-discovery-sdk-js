@@ -1,6 +1,6 @@
 {
   "name": "@adastradev/serverless-discovery-sdk",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "description": "Serverless Service Discovery API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,6 +33,7 @@
     "chai": "^4.2.0",
     "gulp": "^4.0.2",
     "mocha": "^6.1.4",
+    "snyk": "^1.290.1",
     "tmp": "^0.1.0",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
@@ -40,8 +41,8 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@adastradev/aws-api-gateway-client": "^0.2.18-beta.3",
-    "snyk": "^1.251.2"
+    "@babel/runtime": "^7.8.4",
+    "aws-api-gateway-client": "^0.3.3"
   },
   "snyk": true,
   "files": [
