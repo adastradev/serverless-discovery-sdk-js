@@ -5,7 +5,7 @@ import { BearerTokenCredentials } from './BearerTokenCredentials';
 
 // ignore type checking for private member aws-api-gateway-client for now
 declare function require(name:string): any; // tslint:disable-line
-const apigClientFactory: any = require('aws-api-gateway-client').default; // tslint:disable-line
+const apigClientFactory: any = require('@adastradev/aws-api-gateway-client').default; // tslint:disable-line
 
 export class DiscoveryServiceApi {
     // TODO: create an interface for client to allow plugging in clients for cloud providers other than AWS
