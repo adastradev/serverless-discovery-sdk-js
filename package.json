@@ -1,6 +1,6 @@
 {
   "name": "@adastradev/serverless-discovery-sdk",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Serverless Service Discovery API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,23 +26,23 @@
   "devDependencies": {
     "@adastradev/gulp-snyk": "^1.0.0",
     "@types/app-root-path": "^1.2.4",
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^12.0.0",
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.30",
     "@types/tmp": "^0.1.0",
     "chai": "^4.2.0",
     "gulp": "^4.0.2",
-    "mocha": "^6.1.4",
-    "snyk": "^1.290.1",
+    "mocha": "^6.2.2",
+    "snyk": "^1.304.0",
     "tmp": "^0.1.0",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
+    "ts-node": "^8.8.1",
+    "tslint": "^5.20.1",
     "tslint-config-security": "^1.16.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@babel/runtime": "^7.8.4",
-    "aws-api-gateway-client": "^0.3.3"
+    "@adastradev/aws-api-gateway-client": "^1.0.1",
+    "@babel/runtime": "^7.9.2"
   },
   "snyk": true,
   "files": [
