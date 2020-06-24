@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@adastradev/aws-api-gateway-client": "^1.0.1",
-    "@babel/runtime": "^7.9.2"
+    "@babel/runtime": "^7.10.2"
   },
   "snyk": true,
   "files": [
