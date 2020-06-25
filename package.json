@@ -41,7 +41,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@adastradev/aws-api-gateway-client": "^1.0.1",
+    "@adastradev/aws-api-gateway-client": "^1.0.2",
     "@babel/runtime": "^7.9.2"
   },
   "snyk": true,
